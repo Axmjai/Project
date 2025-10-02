@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const app = express();
 app.use(cors());
@@ -30,12 +31,12 @@ function isSnakeDomain(text = '') {
   ];
   return kws.some(k => t.includes(k));
 }
-
-const API_ROOT = 'https://generativelanguage.googleapis.com/v1';
-const MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-pro'; // หรือ 'gemini-1.5-flash'
-
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+//const API_ROOT = 'https://generativelanguage.googleapis.com/v1';
+//const MODELs = process.env.GEMINI_MODEL || 'gemini-1.5-flash'; // หรือ 'gemini-1.5-flash'
+const MODEL = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 app.get('/models', async (_req, res) => {
-  const r = await fetch(`${API_ROOT}/models?key=${process.env.GEMINI_API_KEY}`);
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${process.env.GEMINI_API_KEY}`);
   res.status(r.status).json(await r.json());
 });
 
