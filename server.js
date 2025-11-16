@@ -67,22 +67,6 @@ function isSnakeDomain(text = '') {
 }
 
 // -------------------------------
-// 6) (Optional) GET /models
-// ดูรายชื่อโมเดลทั้งหมดที่ API ตอบมา (ไว้ debug/ดูเล่น)
-// -------------------------------
-// ไม่ได้เอาไปใช้เลือกโมเดล แค่ proxy ให้ดูเฉย ๆ
-app.get('/models', async (_req, res) => {
-  try {
-    const r = await fetch(`${API_ROOT}/models?key=${process.env.GEMINI_API_KEY}`)
-    const j = await r.json()
-    res.status(r.status).json(j)
-  } catch (e) {
-    console.error('list models error:', e)
-    res.status(500).json({ error: 'cannot list models' })
-  }
-})
-
-// -------------------------------
 // 7) POST /chat
 // route หลักที่ frontend (Flutter) จะเรียก
 // รับ JSON: { "message": "ข้อความจากผู้ใช้" }
@@ -139,11 +123,8 @@ app.post('/chat', async (req, res) => {
 
     // 7.5) ดึงข้อความคำตอบจากโครงสร้าง response
     // โครง: candidates[0].content.parts[].text
-    const text =
-      j.candidates?.[0]?.content?.parts
-        ?.map((p) => p.text)
-        .join('') ||
-      'ขออภัย ไม่พบคำตอบที่ชัดเจน'
+    const text = j.candidates?.[0]?.content?.parts?.map((p) => p.text)
+        .join('') || 'ขออภัย ไม่พบคำตอบที่ชัดเจน'
 
     // ส่งกลับให้ frontend ในฟิลด์ answer
     res.json({ answer: text })
